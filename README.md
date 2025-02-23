@@ -1,51 +1,30 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script para The T-Titans Battlegrounds</title>
-    <style>
-        body {
-            background-color: cyan;
-            text-align: center;
-            font-family: Arial, sans-serif;
-        }
-        h1 {
-            color: white;
-        }
-        button {
-            background-color: white;
-            color: black;
-            padding: 15px 30px;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        button:hover {
-            background-color: gray;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <h1>Baixe o Script para The T-Titans Battlegrounds</h1>
-    <button onclick="downloadScript()">Baixar Script</button>
-
-    <script>
-        function downloadScript() {
-            const scriptContent = `local player = game.Players.LocalPlayer
+local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
--- Aumentar a hitbox (corpo do jogador)
+-- Aumentar a hitbox do próprio jogador para 1 e deixá-la visível
 for _, v in pairs(character:GetChildren()) do
     if v:IsA("BasePart") then
-        v.Size = Vector3.new(100, 100, 100)
-        v.Transparency = 0.7 -- Deixa semi-transparente para evitar suspeitas
+        v.Size = Vector3.new(1, 1, 1)
+        v.Transparency = 0 -- Torna a hitbox visível para o próprio jogador
     end
 end
 
--- Remover tempo de recarga das habilidades
+-- Definir hitbox dos outros jogadores como 1000 e invisível para eles
+for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+    if otherPlayer ~= player then
+        local otherCharacter = otherPlayer.Character
+        if otherCharacter then
+            for _, v in pairs(otherCharacter:GetChildren()) do
+                if v:IsA("BasePart") then
+                    v.Size = Vector3.new(1000, 1000, 1000)
+                    v.Transparency = 1 -- Torna a hitbox invisível para os outros jogadores
+                end
+            end
+        end
+    end
+end
+
+-- Remover tempo de recarga das habilidades e definir para 0,0
 local function removeCooldown()
     for _, v in pairs(getgc(true)) do
         if type(v) == "function" and islclosure(v) then
@@ -68,16 +47,5 @@ game.StarterGui:SetCore("SendNotification", {
     Duration = 60; -- Duração da notificação em segundos
 })
 
-print("Script ativado! Hitbox definida para 100, cooldown removido e notificação exibida por 60 segundos.")`;
+print("Script ativado! Sua hitbox está visível e definida para 1, e a hitbox dos outros jogadores está invisível e definida para 1000. Cooldown removido (definido para 0,0).")
 
-            const blob = new Blob([scriptContent], { type: "text/plain" });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "roblox_script.lua";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-    </script>
-</body>
-</html>
